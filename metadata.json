@@ -1,0 +1,6 @@
+{
+  "name": "SRSADMIN Bank",
+  "description": "SRSADMIN Bank CBS Core Banking Platform and NetBanking Portal featuring account opening, balance management, RuPay/Visa card issuance, and fund transfers.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
