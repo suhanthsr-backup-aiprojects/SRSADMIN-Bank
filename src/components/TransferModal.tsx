@@ -23,6 +23,7 @@ interface TransferModalProps {
   userCards: Card[];
   onExecuteTransfer: (newTx: Transaction, updatedBalance: number) => void;
   preselectedCardId?: string;
+  onOpenRazorpaySimulator?: () => void;
 }
 
 export const TransferModal: React.FC<TransferModalProps> = ({
@@ -33,6 +34,7 @@ export const TransferModal: React.FC<TransferModalProps> = ({
   userCards,
   onExecuteTransfer,
   preselectedCardId,
+  onOpenRazorpaySimulator,
 }) => {
   const [transferMode, setTransferMode] = useState<'IMPS' | 'NEFT' | 'RTGS' | 'UPI'>('IMPS');
   const [recipientType, setRecipientType] = useState<'CANARA_INTERNAL' | 'OTHER_BANK' | 'UPI_VPA'>('CANARA_INTERNAL');
@@ -105,11 +107,11 @@ export const TransferModal: React.FC<TransferModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto">
-      <div className="bg-white rounded-3xl border-2 border-[#004B87]/30 shadow-2xl w-full max-w-xl overflow-hidden my-8 animate-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm overflow-y-auto animate-in fade-in duration-200">
+      <div className="bg-white dark:bg-[#111C33] rounded-3xl border-2 border-[#004B87]/30 dark:border-blue-900/50 shadow-2xl w-full max-w-xl overflow-hidden my-8 animate-in zoom-in-95 duration-200 text-slate-800 dark:text-slate-100">
         
         {/* Modal Header */}
-        <div className="bg-[#004B87] text-white p-6 flex items-center justify-between border-b-4 border-[#FFB800]">
+        <div className="bg-[#004B87] dark:bg-[#07172C] text-white p-6 flex items-center justify-between border-b-4 border-[#FFB800]">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center">
               <ArrowRightLeft className="w-5 h-5 text-[#FFB800]" />
@@ -130,16 +132,33 @@ export const TransferModal: React.FC<TransferModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-xl text-blue-200 hover:text-white hover:bg-white/10 transition-colors"
+            className="p-2 rounded-xl text-blue-200 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
+        {/* Razorpay Simulation Test Alert Link */}
+        {onOpenRazorpaySimulator && (
+          <div className="px-6 py-2.5 bg-blue-50 dark:bg-blue-950/40 border-b border-blue-100 dark:border-blue-900/60 flex items-center justify-between text-xs">
+            <div className="flex items-center gap-2 text-blue-900 dark:text-blue-200">
+              <Zap className="w-4 h-4 text-amber-500 fill-amber-500" />
+              <span>Simulate online merchant payment with 3D-Secure OTP?</span>
+            </div>
+            <button
+              type="button"
+              onClick={onOpenRazorpaySimulator}
+              className="text-xs font-bold text-blue-700 dark:text-blue-300 hover:underline cursor-pointer"
+            >
+              Open Razorpay Testbed →
+            </button>
+          </div>
+        )}
+
         {/* Modal Form */}
         <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-5">
           {error && (
-            <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl flex items-center gap-2 font-medium">
+            <div className="p-3 bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs rounded-xl flex items-center gap-2 font-medium">
               <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
               <span>{error}</span>
             </div>
@@ -147,7 +166,7 @@ export const TransferModal: React.FC<TransferModalProps> = ({
 
           {/* Transfer Mode Picker */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1.5">Payment Channel</label>
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Payment Channel</label>
             <div className="grid grid-cols-4 gap-2">
               {[
                 { mode: 'IMPS', label: 'IMPS 24x7', desc: 'Instant' },
@@ -159,14 +178,14 @@ export const TransferModal: React.FC<TransferModalProps> = ({
                   key={m.mode}
                   type="button"
                   onClick={() => setTransferMode(m.mode as any)}
-                  className={`p-2 rounded-xl text-center transition-all ${
+                  className={`p-2 rounded-xl text-center transition-all cursor-pointer ${
                     transferMode === m.mode
-                      ? 'bg-[#004B87] text-white shadow-md font-bold'
-                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200 font-semibold'
+                      ? 'bg-[#004B87] dark:bg-blue-600 text-white shadow-md font-bold'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 font-semibold'
                   }`}
                 >
                   <span className="block text-xs">{m.label}</span>
-                  <span className={`block text-[9px] ${transferMode === m.mode ? 'text-amber-300' : 'text-slate-500'}`}>
+                  <span className={`block text-[9px] ${transferMode === m.mode ? 'text-amber-300' : 'text-slate-500 dark:text-slate-400'}`}>
                     {m.desc}
                   </span>
                 </button>
@@ -176,15 +195,15 @@ export const TransferModal: React.FC<TransferModalProps> = ({
 
           {/* Recipient Type */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1.5">Beneficiary Type</label>
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Beneficiary Type</label>
             <div className="grid grid-cols-3 gap-2">
               <button
                 type="button"
                 onClick={() => setRecipientType('CANARA_INTERNAL')}
-                className={`py-2 px-3 rounded-xl text-xs font-bold transition-all ${
+                className={`py-2 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   recipientType === 'CANARA_INTERNAL'
-                    ? 'bg-[#004B87] text-white shadow-md'
-                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                    ? 'bg-[#004B87] dark:bg-blue-600 text-white shadow-md'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
                 }`}
               >
                 SRSADMIN Beneficiary
@@ -193,10 +212,10 @@ export const TransferModal: React.FC<TransferModalProps> = ({
               <button
                 type="button"
                 onClick={() => setRecipientType('OTHER_BANK')}
-                className={`py-2 px-3 rounded-xl text-xs font-bold transition-all ${
+                className={`py-2 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   recipientType === 'OTHER_BANK'
-                    ? 'bg-[#004B87] text-white shadow-md'
-                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                    ? 'bg-[#004B87] dark:bg-blue-600 text-white shadow-md'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
                 }`}
               >
                 Other Bank (NEFT/IFSC)
@@ -205,10 +224,10 @@ export const TransferModal: React.FC<TransferModalProps> = ({
               <button
                 type="button"
                 onClick={() => setRecipientType('UPI_VPA')}
-                className={`py-2 px-3 rounded-xl text-xs font-bold transition-all ${
+                className={`py-2 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   recipientType === 'UPI_VPA'
-                    ? 'bg-[#004B87] text-white shadow-md'
-                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                    ? 'bg-[#004B87] dark:bg-blue-600 text-white shadow-md'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
                 }`}
               >
                 UPI ID (VPA)
@@ -219,13 +238,13 @@ export const TransferModal: React.FC<TransferModalProps> = ({
           {/* Beneficiary Details */}
           {recipientType === 'CANARA_INTERNAL' && (
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
                 Select SRSADMIN Account Holder
               </label>
               <select
                 value={targetUserId}
                 onChange={(e) => setTargetUserId(e.target.value)}
-                className="w-full p-2.5 bg-[#F8FAFD] border border-slate-300 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-[#004B87]"
+                className="w-full p-2.5 bg-[#F8FAFD] dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 focus:outline-none focus:border-[#004B87]"
               >
                 {allUsers.filter(u => u.id !== currentUser.id).map((u) => (
                   <option key={u.id} value={u.id}>
@@ -239,37 +258,37 @@ export const TransferModal: React.FC<TransferModalProps> = ({
           {recipientType === 'OTHER_BANK' && (
             <div className="space-y-3">
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Beneficiary Name</label>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Beneficiary Name</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Vikramaditya Singhania"
                   value={beneficiaryName}
                   onChange={(e) => setBeneficiaryName(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#F8FAFD] border border-slate-300 rounded-xl text-xs font-medium focus:outline-none focus:border-[#004B87]"
+                  className="w-full px-3 py-2 bg-[#F8FAFD] dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-800 dark:text-white focus:outline-none focus:border-[#004B87]"
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Beneficiary Account Number</label>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Beneficiary Account Number</label>
                   <input
                     type="text"
                     required
                     placeholder="e.g. 50100293849182"
                     value={beneficiaryAccount}
                     onChange={(e) => setBeneficiaryAccount(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#F8FAFD] border border-slate-300 rounded-xl text-xs font-mono font-bold focus:outline-none focus:border-[#004B87]"
+                    className="w-full px-3 py-2 bg-[#F8FAFD] dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-mono font-bold text-slate-800 dark:text-white focus:outline-none focus:border-[#004B87]"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Destination IFSC Code</label>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Destination IFSC Code</label>
                   <input
                     type="text"
                     required
                     placeholder="e.g. SBIN0001234"
                     value={beneficiaryIfsc}
                     onChange={(e) => setBeneficiaryIfsc(e.target.value.toUpperCase())}
-                    className="w-full px-3 py-2 bg-[#F8FAFD] border border-slate-300 rounded-xl text-xs font-mono font-bold uppercase focus:outline-none focus:border-[#004B87]"
+                    className="w-full px-3 py-2 bg-[#F8FAFD] dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-mono font-bold uppercase text-slate-800 dark:text-white focus:outline-none focus:border-[#004B87]"
                   />
                 </div>
               </div>
@@ -278,14 +297,14 @@ export const TransferModal: React.FC<TransferModalProps> = ({
 
           {recipientType === 'UPI_VPA' && (
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">Virtual Payment Address (UPI ID)</label>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Virtual Payment Address (UPI ID)</label>
               <input
                 type="text"
                 required
                 placeholder="e.g. merchant@okhdfcbank or 9845012345@paytm"
                 value={upiVpa}
                 onChange={(e) => setUpiVpa(e.target.value)}
-                className="w-full px-3 py-2 bg-[#F8FAFD] border border-slate-300 rounded-xl text-xs font-mono font-bold text-[#004B87] focus:outline-none focus:border-[#004B87]"
+                className="w-full px-3 py-2 bg-[#F8FAFD] dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-mono font-bold text-[#004B87] dark:text-blue-400 focus:outline-none focus:border-[#004B87]"
               />
             </div>
           )}
@@ -293,10 +312,10 @@ export const TransferModal: React.FC<TransferModalProps> = ({
           {/* Amount */}
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="text-xs font-bold text-slate-700">
+              <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
                 Transfer Amount (₹ INR) <span className="text-rose-600">*</span>
               </label>
-              <span className="text-[11px] text-slate-500 font-mono">
+              <span className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">
                 Available Bal: {formatCurrency(currentUser.balance)}
               </span>
             </div>
@@ -307,26 +326,26 @@ export const TransferModal: React.FC<TransferModalProps> = ({
               required
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="w-full px-3.5 py-2.5 bg-[#F8FAFD] border border-slate-300 rounded-xl text-base font-mono font-black text-[#004B87] focus:outline-none focus:border-[#004B87]"
+              className="w-full px-3.5 py-2.5 bg-[#F8FAFD] dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-base font-mono font-black text-[#004B87] dark:text-blue-400 focus:outline-none focus:border-[#004B87]"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">Remarks / Payment Narration</label>
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Remarks / Payment Narration</label>
             <input
               type="text"
               value={remarks}
               onChange={(e) => setRemarks(e.target.value)}
-              className="w-full px-3 py-2 bg-[#F8FAFD] border border-slate-300 rounded-xl text-xs focus:outline-none focus:border-[#004B87]"
+              className="w-full px-3 py-2 bg-[#F8FAFD] dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-white focus:outline-none focus:border-[#004B87]"
             />
           </div>
 
           {/* Actions */}
-          <div className="pt-3 border-t border-slate-200 flex items-center justify-end gap-3">
+          <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-end gap-3">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-100 font-bold text-xs"
+              className="px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold text-xs cursor-pointer"
             >
               Cancel
             </button>
@@ -334,7 +353,7 @@ export const TransferModal: React.FC<TransferModalProps> = ({
             <button
               type="submit"
               disabled={isProcessing}
-              className="px-6 py-2.5 rounded-xl bg-[#004B87] hover:bg-[#003B6F] text-white font-black text-xs shadow-md transition-all flex items-center gap-2 cursor-pointer border border-[#003B6F]"
+              className="px-6 py-2.5 rounded-xl bg-[#004B87] hover:bg-[#003B6F] dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-black text-xs shadow-md transition-all flex items-center gap-2 cursor-pointer border border-[#003B6F]"
             >
               {isProcessing ? (
                 <span>Dispatching through NPCI / RBI...</span>

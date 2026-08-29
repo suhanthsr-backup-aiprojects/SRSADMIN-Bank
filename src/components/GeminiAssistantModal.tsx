@@ -148,8 +148,8 @@ export const GeminiAssistantModal: React.FC<GeminiAssistantModalProps> = ({
         }),
       });
 
-      const data = await res.json();
-      const replyText = data.reply || (data.error ? `Note: ${data.error}` : 'Unable to retrieve answer. Please try again.');
+      const data = await res.json().catch(() => ({}));
+      const replyText = res.ok && data.reply ? data.reply : 'Unexpected error please try again';
 
       const botMessage: Message = {
         id: `msg-gemini-${Date.now()}`,
@@ -163,7 +163,7 @@ export const GeminiAssistantModal: React.FC<GeminiAssistantModalProps> = ({
       const errorMessage: Message = {
         id: `msg-err-${Date.now()}`,
         sender: 'gemini',
-        text: `We are experiencing a temporary network issue connecting to the Shristi core server. Please try again shortly.`,
+        text: 'Unexpected error please try again',
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       };
       setMessages((prev) => [...prev, errorMessage]);

@@ -83,7 +83,7 @@ export const CanaraLogo: React.FC<CanaraLogoProps> = ({
       <div className="flex flex-col leading-tight">
         <div className="flex items-baseline gap-1.5">
           <span className={`font-serif tracking-tight ${subTextSize} ${inverted ? 'text-amber-300' : 'text-[#004B87]'}`}>
-            एसआरएसएडमिन बैंक
+            SRSADMIN बैंक
           </span>
           <span className="text-slate-400 font-light text-xs">/</span>
           <span className={`font-sans tracking-tight uppercase ${primaryTextSize} ${inverted ? 'text-white' : 'text-[#004B87]'}`}>

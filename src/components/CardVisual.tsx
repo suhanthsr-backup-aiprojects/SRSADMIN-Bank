@@ -16,6 +16,7 @@ import {
 interface CardVisualProps {
   card: Card;
   showAdminBadge?: boolean;
+  showControls?: boolean;
   onCardClick?: () => void;
   interactiveFlip?: boolean;
   className?: string;
@@ -24,6 +25,7 @@ interface CardVisualProps {
 export const CardVisual: React.FC<CardVisualProps> = ({
   card,
   showAdminBadge = true,
+  showControls = true,
   onCardClick,
   interactiveFlip = true,
   className = '',
@@ -164,8 +166,8 @@ export const CardVisual: React.FC<CardVisualProps> = ({
               </div>
               <div className="leading-tight">
                 <div className="flex items-baseline gap-1">
-                  <span className="font-serif font-bold text-xs text-amber-300">एसआरएसएडमिन</span>
-                  <span className="text-[11px] text-white font-extrabold uppercase tracking-tight">SRSADMIN Bank</span>
+                  <span className="font-serif font-bold text-xs text-amber-300">SRSADMIN बैंक</span>
+                  <span className="text-[11px] text-white font-extrabold uppercase tracking-tight">/ Bank</span>
                 </div>
                 <p className={`text-[8px] uppercase tracking-wider font-semibold ${themeStyle.subtextColor}`}>
                   {card.cardNickname || (card.type === 'DEBIT' ? 'International Debit Card' : 'Credit Card')}

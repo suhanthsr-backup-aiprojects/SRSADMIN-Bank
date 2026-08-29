@@ -148,7 +148,7 @@ export interface AuditLog {
   adminId: string;
   adminName: string;
   action: string;
-  targetType: 'CARD' | 'USER' | 'TRANSACTION' | 'SECURITY';
+  targetType: 'CARD' | 'USER' | 'TRANSACTION' | 'SECURITY' | 'ADMIN';
   targetId: string;
   details: string;
   timestamp: string;
